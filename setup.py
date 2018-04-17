@@ -11,7 +11,7 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = 'colab_utils'
+NAME = 'k60258colab'
 DESCRIPTION = 'private colab util from kk60258 forked from https://github.com/mixuala/colab_utils'
 URL = 'https://github.com/kk60258/colab_utils'
 EMAIL = 'kk60258@gmail'
