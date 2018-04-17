@@ -16,7 +16,7 @@ DESCRIPTION = 'private colab util from kk60258 forked from https://github.com/mi
 URL = 'https://github.com/kk60258/colab_utils'
 EMAIL = 'kk60258@gmail'
 AUTHOR = 'kk60258'
-REQUIRES_PYTHON = '~=2.7'
+REQUIRES_PYTHON = '>=2.7'
 VERSION = None
 
 # What packages are required for this module to be executed?
