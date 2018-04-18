@@ -3,6 +3,14 @@ This repository ontains useful scripts for adding common services to non-persist
 
 see: https://colab.research.google.com/notebook
 
+## Dependencies
+
+pip install --upgrade google-api-python-client
+
+pip install --upgrade google-cloud
+
+**TODO:** to find google colab python package
+
 
 ## Tensorboard 
 create a public `tensorboard` URL using secure introspective tunnels via `ngrok`
