@@ -11,7 +11,7 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = 'k60258colab'
+NAME = 'nerdcolab'
 DESCRIPTION = 'private colab util from kk60258 forked from https://github.com/mixuala/colab_utils'
 URL = 'https://github.com/kk60258/colab_utils'
 EMAIL = 'kk60258@gmail'
@@ -39,7 +39,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 # Load the package's __version__.py module as a dictionary.
 about = {}
 if not VERSION:
-    with open(os.path.join(here, '__init__.py')) as f:
+    with open(os.path.join(here, '__about__.py')) as f:
         exec(f.read(), about)
 else:
     about['__version__'] = VERSION
