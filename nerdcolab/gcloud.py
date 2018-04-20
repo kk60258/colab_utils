@@ -481,9 +481,9 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
   if step:
     checkpoint_pattern = 'model.ckpt-{}'.format(step)
   else:  # get latest checkpoint
-    checkpoint = tf.train.latest_checkpoint(train_dir)
+    checkpoint = tf.train.latest_checkpoint(os.path.dirname(train_dir))
     if checkpoint==None:
-      raise RuntimeError("Error: tf.train.latest_checkpoint()")
+      raise RuntimeError("cannot find ckpt via tf.train.latest_checkpoint() under {}".format(os.path.dirname(train_dir)))
     checkpoint_pattern = os.path.basename(checkpoint)
     
   global_step = re.findall(".*ckpt-?(\d+).*$",checkpoint_pattern)
