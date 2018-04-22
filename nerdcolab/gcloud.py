@@ -529,7 +529,7 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
     if save_all_dir:
       result = os.system("tar -czvf {} {}".format(tar_filename, train_dir))
     else:
-      files = [f for f in os.listdir(train_dir) if
+      files = [os.path.join(train_dir, f) for f in os.listdir(train_dir) if
                os.path.isfile(os.path.join(train_dir, f)) and f.startswith(os.path.basename(checkpoint))]
 
       result = os.system("tar -czvf {} {}".format(tar_filename, " ".join(files)))
