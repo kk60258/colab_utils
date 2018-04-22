@@ -541,7 +541,7 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
     bucket_path = "gs://{}/{}".format(bucket, os.path.basename(tar_filename))
     print( "uploading tar archive to bucket={} ...".format(bucket_path))
     # result = _shell("gsutil cp {} {}".format(tar_filepath, bucket_path))
-    result = gcs_upload(tar_filepath, bucket_path, project_id=project_id)
+    result = gcs_upload(os.path.join(os.getcwd(), tar_filename), bucket_path, project_id=project_id)
         
     if type(result)==dict and result['err_code']:
       raise RuntimeError("ERROR: error uploading to gcloud, bucket={}".format(bucket_path))
