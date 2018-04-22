@@ -493,7 +493,7 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
     if basename is None:
       basename = os.path.basename(train_dir)
     tar_filename = "{}.{}.tar.gz".format(basename, global_step)
-    tar_filepath = os.path.join("/tmp", tar_filename)
+    tar_filepath = os.path.join(train_dir, tar_filename)
 
     # check if gcs file already exists
     # bucket_path = "gs://{}/".format(bucket)
