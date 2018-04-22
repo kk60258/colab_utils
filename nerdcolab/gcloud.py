@@ -434,7 +434,7 @@ def load_latest_checkpoint_from_bucket(tensorboard_run, bucket, train_dir):
     
 
 # tested OK
-def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save_events=True, force=False):
+def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save_events=True, force=False, save_all_dir=True):
   """tar.gz the latest checkpoint files from train_dir and save to GCS bucket
   
   NOTE: authorize notebook before use:
@@ -491,7 +491,7 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
   
   if global_step:
     if basename is None:
-      basename = train_dir
+      basename = os.path.basename(train_dir)
     tar_filename = "{}.{}.tar.gz".format(basename, global_step)
     tar_filepath = os.path.join("/tmp", tar_filename)
 
@@ -526,7 +526,14 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
     # print( "writing tar.gz archive to, file={}, count={} ...".format(tar_filepath, len(filelist)))
     # tar -czvf {tar_filepath.tar.gz} -C {checkpoint_path} [f for f in os.listdir(...)]
     # result = get_ipython().system_raw( "tar.gz -D {} {}".format(tar_filepath, " ".join(filelist)))
-    result = os.system("tar -czvf {} {}".format(tar_filepath, train_dir))
+    if save_all_dir:
+      result = os.system("tar -czvf {} {}".format(tar_filename, train_dir))
+    else:
+      files = [f for f in os.listdir(train_dir) if
+               os.path.isfile(os.path.join(train_dir, f)) and f.startswith(os.path.basename(checkpoint))]
+
+      result = os.system("tar -czvf {} {}".format(tar_filename, " ".join(files)))
+
     
     if not os.path.isfile(tar_filepath):
       raise RuntimeError("ERROR: tar file not created, path={}".format(tar_filepath))
