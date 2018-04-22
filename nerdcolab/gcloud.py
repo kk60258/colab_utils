@@ -357,7 +357,7 @@ def load_from_bucket(tar_filename, bucket, train_dir):
   
   print( "extracting {} to {}".format(tar_filepath, train_dir))
   # untar.gz -j ignore directories, -d target dir, tar -xzvf {archive.tar.gz} --overwrite --directory {target}
-  get_ipython().system_raw( "tar -xzvf {} --overwrite --directory {} ".format(tar_filepath, train_dir))
+  os.system( "tar -xzvf {} --overwrite --directory {} ".format(tar_filepath, train_dir))
   print( "installing checkpoint to {} ...".format(train_dir))
 
   # example filenames:
@@ -526,7 +526,7 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
     # print( "writing tar.gz archive to, file={}, count={} ...".format(tar_filepath, len(filelist)))
     # tar -czvf {tar_filepath.tar.gz} -C {checkpoint_path} [f for f in os.listdir(...)]
     # result = get_ipython().system_raw( "tar.gz -D {} {}".format(tar_filepath, " ".join(filelist)))
-    result = get_ipython().system_raw( "tar -czvf {} {}".format(tar_filepath, train_dir))
+    result = os.system("tar -czvf {} {}".format(tar_filepath, train_dir))
     
     if not os.path.isfile(tar_filepath):
       raise RuntimeError("ERROR: tar file not created, path={}".format(tar_filepath))
