@@ -479,21 +479,20 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
 
   checkpoint_path = train_dir
   if step:
-    checkpoint_pattern = 'model.ckpt-{}'.format(step)
+    global_step = step
   else:  # get latest checkpoint
-    checkpoint = tf.train.latest_checkpoint(os.path.dirname(train_dir))
+    checkpoint = tf.train.latest_checkpoint(train_dir)
     if checkpoint==None:
-      raise RuntimeError("cannot find ckpt via tf.train.latest_checkpoint() under {}".format(os.path.dirname(train_dir)))
-    checkpoint_pattern = os.path.basename(train_dir)
-    
-  global_step = re.findall(".*ckpt-?(\d+).*$",checkpoint_pattern)
+      raise RuntimeError("cannot find ckpt via tf.train.latest_checkpoint() under {}".format(train_dir))
+    checkpoint_pattern = os.path.basename(checkpoint)
+    global_step = checkpoint.split('-')[-1]
 
 
   
   if global_step:
     if basename is None:
-      basename = os.path.basename(train_dir)
-    tar_filename = "{}.{}.tar.gz".format(basename, global_step[0])
+      basename = train_dir
+    tar_filename = "{}.{}.tar.gz".format(basename, global_step)
     tar_filepath = os.path.join("/tmp", tar_filename)
 
     # check if gcs file already exists
@@ -505,29 +504,29 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
     if found and not force:
       raise RuntimeError("WARNING: a tar.gz file already exists, path={}. use force=True to overwrite".format(found[0]))
     
-    files_subfiles, root_dir = _list_files_subfiles(checkpoint_path)
+    # files_subfiles, root_dir = _list_files_subfiles(checkpoint_path)
+    #
+    # files = [f for f in files_subfiles if checkpoint_pattern in f]
+    # # files = !ls $checkpoint_path
+    # print("archiving checkpoint files={}".format(files))
+    # filelist = files
+    #
+    #
+    # if save_events:
+    #   # save events for tensorboard
+    #   # event_path = os.path.join(train_dir,'events.out.tfevents*')
+    #   # events = !ls $event_path
+    #   event_pattern = 'events.out.tfevents'
+    #   events = [f for f in files_subfiles if event_pattern in f]
+    #   if events:
+    #     print("archiving event files={}".format(events))
+    #     filelist = files + events
 
-    files = [f for f in files_subfiles if checkpoint_pattern in f]
-    # files = !ls $checkpoint_path
-    print("archiving checkpoint files={}".format(files))
-    filelist = files
-  
 
-    if save_events:
-      # save events for tensorboard
-      # event_path = os.path.join(train_dir,'events.out.tfevents*')
-      # events = !ls $event_path
-      event_pattern = 'events.out.tfevents'
-      events = [f for f in files_subfiles if event_pattern in f]
-      if events: 
-        print("archiving event files={}".format(events))
-        filelist = files + events
-
-
-    print( "writing tar.gz archive to, file={}, count={} ...".format(tar_filepath, len(filelist)))
+    # print( "writing tar.gz archive to, file={}, count={} ...".format(tar_filepath, len(filelist)))
     # tar -czvf {tar_filepath.tar.gz} -C {checkpoint_path} [f for f in os.listdir(...)]
     # result = get_ipython().system_raw( "tar.gz -D {} {}".format(tar_filepath, " ".join(filelist)))
-    result = get_ipython().system_raw( "tar -czvf {} -C {} {}".format(tar_filepath, checkpoint_path, " ".join(filelist)))
+    result = get_ipython().system_raw( "tar -czvf {} {}".format(tar_filepath, train_dir))
     
     if not os.path.isfile(tar_filepath):
       raise RuntimeError("ERROR: tar file not created, path={}".format(tar_filepath))
@@ -540,9 +539,8 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
     if type(result)==dict and result['err_code']:
       raise RuntimeError("ERROR: error uploading to gcloud, bucket={}".format(bucket_path))
     
-    print("saved: tar={} \n> bucket={} \n> files={}".format(os.path.basename(tar_filepath), 
-                                                      bucket_path, 
-                                                      files))
+    print("saved: tar={} \n> bucket={} \n>".format(os.path.basename(tar_filepath),
+                                                      bucket_path))
     return bucket_path
   else:
     print("no checkpoint found, path={}".format(checkpoint_path))
