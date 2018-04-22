@@ -493,7 +493,7 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
     if basename is None:
       basename = os.path.basename(train_dir)
     tar_filename = "{}.{}.tar.gz".format(basename, global_step)
-    tar_filepath = os.path.join(train_dir, tar_filename)
+    tar_filepath = os.path.join(os.getcwd(), tar_filename)
 
     # check if gcs file already exists
     # bucket_path = "gs://{}/".format(bucket)
@@ -535,8 +535,8 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
       result = os.system("tar -czvf {} -C {} {}".format(tar_filename, train_dir, " ".join(files)))
 
     
-    if not os.path.isfile(tar_filepath):
-      raise RuntimeError("ERROR: tar file not created, path={}".format(tar_filepath))
+    # if not os.path.isfile(tar_filepath):
+    #   raise RuntimeError("ERROR: tar file not created, path={}".format(tar_filepath))
 
     bucket_path = "gs://{}/{}".format(bucket, os.path.basename(tar_filename))
     print( "uploading tar archive to bucket={} ...".format(bucket_path))
