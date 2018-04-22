@@ -531,7 +531,7 @@ def save_to_bucket(train_dir, bucket, project_id, basename=None, step=None, save
     if not os.path.isfile(tar_filepath):
       raise RuntimeError("ERROR: tar file not created, path={}".format(tar_filepath))
 
-    bucket_path = "gs://{}/{}".format(bucket, tar_filename)
+    bucket_path = "gs://{}/{}".format(bucket, os.path.basename(tar_filename))
     print( "uploading tar archive to bucket={} ...".format(bucket_path))
     # result = _shell("gsutil cp {} {}".format(tar_filepath, bucket_path))
     result = gcs_upload(tar_filepath, bucket_path, project_id=project_id)
